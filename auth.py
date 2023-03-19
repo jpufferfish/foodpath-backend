@@ -13,7 +13,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # https://www.grc.com/passwords.htm
 app.config["JWT_SECRET_KEY"] = "F44DC3A9A5E5D58BBB448A06A1158D7535AA6452C989274B7A7BB6743D226ECC"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
-jwt = JWTManager(api)
+jwt = JWTManager(app)
 
 @app.after_request
 def refresh_expiring_jwts(response):
