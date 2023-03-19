@@ -23,6 +23,7 @@ app = Flask(__name__)
 import users
 import logs
 import recsys
+import auth
 import constants
 
 if __name__ == '__main__':

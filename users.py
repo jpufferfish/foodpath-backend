@@ -121,24 +121,30 @@ def delete_user(username):
         conn.close()
     return message
 
+from flask_jwt_extended import jwt_required
+@jwt_required()
 @app.route('/api/users', methods=['GET'])
 def api_get_users():
     return jsonify(get_users())
 
+@jwt_required()
 @app.route('/api/users/<username>', methods=['GET'])
 def api_get_user(username):
     return jsonify(get_user_by_username(username))
 
+@jwt_required()
 @app.route('/api/users/add',  methods = ['POST'])
 def api_add_user():
     user = request.get_json()
     return jsonify(insert_user(user))
 
+@jwt_required()
 @app.route('/api/users/update',  methods = ['PUT'])
 def api_update_user():
     user = request.get_json()
     return jsonify(update_user(user))
 
+@jwt_required()
 @app.route('/api/users/delete/<username>',  methods = ['DELETE'])
 def api_delete_user(username):
     return jsonify(delete_user(username))

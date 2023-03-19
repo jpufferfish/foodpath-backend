@@ -634,18 +634,22 @@ def maintain_weight(user_id, meal_type):
     return Food_itemsdata[y_pred==2]
 
 
+from flask_jwt_extended import jwt_required
 # https://stackabuse.com/get-request-query-parameters-with-flask/
 # an example fetch would include /api/recsys/loss/username?meal_type=breakfast
+@jwt_required()
 @app.route('/api/recsys/loss/<username>', methods=['GET'])
 def api_weight_loss(username):
     meal_type = request.args.get('meal_type')
     return jsonify(weight_loss(username, meal_type))
 
+@jwt_required()
 @app.route('/api/recsys/gain/<username>', methods=['GET'])
 def api_weight_gain(username):
     meal_type = request.args.get('meal_type')
     return jsonify(weight_gain(username, meal_type))
 
+@jwt_required()
 @app.route('/api/recsys/maintain/<username>', methods=['GET'])
 def api_weight_gain(username):
     meal_type = request.args.get('meal_type')
