@@ -1,8 +1,8 @@
 
-# installing packages (might not be all of them)
+# installing packages mac (might not be all of them)
 ```
-pip install -r requirements.txt
 brew install --cask miniconda
+pip install -r requirements.txt
 ```
 
 # testing to see what recsys.py does visually:
