@@ -5,7 +5,7 @@ brew install --cask miniconda
 pip install -r requirements.txt
 pip3 install pipreqs
 pip3 install pip-tools 
-conda install pandas  
+conda install pandas   
 conda install ipython
 pip install wheel
 pip install pandas

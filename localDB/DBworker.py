@@ -29,29 +29,29 @@ k = ''
 
 # foodpath:
 # exercise = light medium or extreme
-for i in keys:
-  for j in db[i]:
-    k = j['username']
-    print('exercise:', j['exercise'])
-    print('weight(lbs):', j['weight'])
-    # print('repitions:', j['repitions'])
-    print('entryTime:', j['entryTime'])
-    print('\n')
-print(k)
-dict = {}
-k =0
-for i in keys:
-  for j in db[i]:
-    dict.update( {
-      i : {
-       j['username'],
-       j['entryID'],
-       j['exercise'],
-       j['weight'],
-       j['food'],
-       j['servings'],
-       j['entryTime'],
-      }
-    } )
+# for i in keys:
+#   for j in db[i]:
+#     k = j['username']
+#     print('exercise:', j['exercise'])
+#     print('weight(lbs):', j['weight'])
+#     # print('repitions:', j['repitions'])
+#     print('entryTime:', j['entryTime'])
+#     print('\n')
+# print(k)
+# dict = {}
+# k =0
+# for i in keys:
+#   for j in db[i]:
+#     dict.update( {
+#       i : {
+#        j['username'],
+#        j['entryID'],
+#        j['exercise'],
+#        j['weight'],
+#        j['food'],
+#        j['servings'],
+#        j['entryTime'],
+#       }
+#     } )
 
-print(dict)
+# print(dict)

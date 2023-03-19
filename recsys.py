@@ -1,18 +1,21 @@
-# foodpath backend for food recs
+#!/usr/bin/python
+import sqlite3
 from flask import Flask
 import logging, sys, constants
-# app = Flask(__name__)
+from flask_cors import CORS #added to top of file
 
-@app.route('/')
-def Weight_Loss():
-    logging.info(" Age : %s Years \n Weight: %s Kg \n Hight: %s m \n" % (e1.get(), e3.get(), e4.get()))
-    
+from users import get_user_by_username
+
+# app = Flask(__name__)
+from __main__ import app
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+def weight_loss(username):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
     USER_INP = simpledialog.askstring(title="Food Timing",
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
-    
     data=pd.read_csv('input.csv')
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -62,11 +65,16 @@ def Weight_Loss():
     Valapnd=[0]+[4]+val
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.iloc[Valapnd]
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.T
-    
-    age=int(e1.get())
-    weight=float(e3.get())
-    height=float(e4.get())
-    bmi = weight/(height**2) 
+
+    # age=int(e1.get())
+    # weight=float(e3.get())
+    # height=float(e4.get())
+    # bmi = weight/(height**2) 
+    user = get_user_by_username(username)
+    age = user['age']
+    weight = user['weight']
+    height = user['height']
+    bmi = weight/(height**2)
     
     for lp in range (0,80,20):
         test_list=np.arange(lp,lp+20)
@@ -203,14 +211,14 @@ def Weight_Loss():
     clf.fit(X_train,y_train)
     y_pred=clf.predict(X_test)
         
-    print ('SUGGESTED FOOD ITEMS ::')
+    print ('Food_itemsdata weightloss ::')
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
-
-def Weight_Gain():
-    logging.info(" Age: %s\n Weight%s\n Hight%s\n" % (e1.get(), e3.get(), e4.get()))
     
+    return Food_itemsdata
+
+def weight_gain(username):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
@@ -269,11 +277,15 @@ def Weight_Gain():
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.iloc[Valapnd]
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.T
     
-    age=int(e1.get())
-    weight=float(e3.get())
-    height=float(e4.get())
-    bmi = weight/(height**2) 
-    agewiseinp=0
+    # age=int(e1.get())
+    # weight=float(e3.get())
+    # height=float(e4.get())
+    # bmi = weight/(height**2) 
+    user = get_user_by_username(username)
+    age = user['age']
+    weight = user['weight']
+    height = user['height']
+    bmi = weight/(height**2)
     
     for lp in range (0,80,20):
         test_list=np.arange(lp,lp+20)
@@ -413,13 +425,16 @@ def Weight_Gain():
     
     y_pred=clf.predict(X_test)
     
-    print ('SUGGESTED FOOD ITEMS ::')
+    print ('Food_itemsdata gain::')
+    print (Food_itemsdata)
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
+    
+    return Food_itemsdata
 
-@app.route('/')
-def Healthy():
+# @app.route('/api/', methods=["GET"], strict_slashes=False)
+def healthy():
     print(" Age: %s\n Weight%s\n Hight%s\n" % (e1.get(), e3.get(), e4.get()))
     import pandas as pd
     import numpy as np
@@ -618,21 +633,11 @@ def Healthy():
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
 
-# i think this is gui code too (prev tkinter code removed)
-# Label(main_win,text="Age",font='Helvetica 12 bold').grid(row=1,column=0,sticky=W,pady=4)
-# Label(main_win,text="Weight",font='Helvetica 12 bold').grid(row=2,column=0,sticky=W,pady=4)
-# Label(main_win,text="Height", font='Helvetica 12 bold').grid(row=3,column=0,sticky=W,pady=4)
-# e1 = Entry(main_win,bg="light grey")
-# e3 = Entry(main_win,bg="light grey")
-# e4 = Entry(main_win,bg="light grey")
-# e1.focus_force() 
-# e1.grid(row=1, column=1)
-# e3.grid(row=2, column=1)
-# e4.grid(row=3, column=1)
-# Button(main_win,text='Quit',font='Helvetica 8 bold',command=main_win.quit).grid(row=5,column=0,sticky=W,pady=4)
-# Button(main_win,text='Weight Loss',font='Helvetica 8 bold',command=Weight_Loss).grid(row=1,column=4,sticky=W,pady=4)
-# Button(main_win,text='Weight Gain',font='Helvetica 8 bold',command=Weight_Gain).grid(row=2,column=4,sticky=W,pady=4)
-# Button(main_win,text='Healthy',font='Helvetica 8 bold',command=Healthy).grid(row=3,column=4,sticky=W,pady=4)
-# main_win.geometry("400x200")
-# main_win.wm_title("DIET RECOMMENDATION SYSTEM")
-# main_win.mainloop()
+
+@app.route('/api/recsys/loss/<username>', methods=['GET'])
+def api_weight_loss(username):
+    return jsonify(weight_loss(username))
+
+@app.route('/api/recsys/gain/<username>', methods=['GET'])
+def api_weight_gain(username):
+    return jsonify(weight_gain(username))

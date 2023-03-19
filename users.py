@@ -1,132 +1,148 @@
-from flask import Flask, request, render_template,jsonify
-from flask_cors import CORS
-from threading import Thread
+# https://levelup.gitconnected.com/full-stack-web-app-with-python-react-and-bootstrap-backend-8592baa6e4eb
+#!/usr/bin/python
 import sqlite3
-import sys
-import os
-import constants
+from flask import Flask, request, jsonify #added to top of file
+from flask_cors import CORS #added to top of file
+# app = Flask(__name__)
+from __main__ import app
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# sqlite code from
-# https://github.com/cs125-group53/foodpath/blob/master/previous-src/App.tsx
-
-# Init. flask
-app = Flask('')
-# Cross origin 
-CORS(app)
-os.environ['TZ'] = ('US/EASTERN')
-# Init. sql
-def get_db_connection():
-    conn = sqlite3.connect(constants.LOGS_DB)
-    conn.row_factory = sqlite3.Row
+def connect_to_db():
+    conn = sqlite3.connect('database.db')
     return conn
-    
-# POST
-@app.route('/create/', methods=('GET', 'POST'), strict_slashes=False)
-def create():
-    args = request.args.get('username')
-    print(args, file=sys.stderr)
-    if request.method == 'POST':
-        data = request.get_json()
-        print(data, file=sys.stderr)
-        exercise = ''
-        weight = ''
-        total_weight=0
-        repititions = ''
-        worktime = ''
-        for x in data:
-          if x["username"] == None:
-            username = 'null'
-          else: 
-            username = x["username"]
 
-          if x['exercise'] == None:
-            exercise = 'null,' + exercise
-          else: 
-            exercise = x['exercise']  + "," + exercise
-
-          if x['weight'] == None:
-            weight = 'null,' + weight
-          else: 
-            weight = x['weight'] + "," + (str(weight))
-          
-          if type(x['totalWeight']) == type(100):
-            if x['totalWeight'] > total_weight:
-              total_weight = x['totalWeight']
-          
-          if x['repitions'] == None:
-              repititions = 'null,' + repititions
-          else: 
-            repititions = x['repitions'] + "," + repititions
-
-          worktime = x['time'] + "," + worktime
-          created = x['created']
-        conn = get_db_connection()
-        workouts = conn.execute('SELECT * FROM workouts WHERE username = ? And created = ?', (args,created)).fetchall()
-      
-        is_present = bool(workouts)
-        if is_present:
-            print("Previous workout flag being returned", file=sys.stderr)
-            conn.close()
-            return "ALREADY logged" 
-        conn.execute(
-          'INSERT INTO workouts (username, exercise, weight,repititions,totalweight, time, created ) VALUES (?,?,?,?,?,?,?)',
-          (username, exercise, weight, repititions, total_weight, worktime, created, ))
+# CRUD
+def create_db_table():
+    try:
+        conn = connect_to_db()
+        conn.execute( '''CREATE TABLE users (
+          username TEXT PRIMARY KEY NOT NULL,
+          password TEXT NOT NULL,
+          height INTEGER NOT NULL
+          weight INTEGER NOT NULL
+          age INTEGER NOT NULL
+          );'''
+        )
         conn.commit()
+        print("User table created successfully")
+    except:
+        print("User table creation failed - Maybe table")
+    finally:
         conn.close()
-        
-    return "POSTED!"
 
-# GET (WEB)
-@app.route('/')
-def index():
-    conn = get_db_connection()
-    workouts = conn.execute('SELECT * FROM workouts').fetchall()
-    conn.close()
-    return render_template('webIndex.html', workouts=workouts)
+def insert_user(user):
+    inserted_user = {}
+    try:
+        conn = connect_to_db()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO users (username, password, height, weight, age) VALUES (?, ?, ?, ?, ?)"
+                    , (user['username'], user['password']), user['height'], user['weight'], user['age'] )
+        conn.commit()
+        inserted_user = get_user_by_username(cur.lastrowid)
+    except:
+        conn().rollback()
 
-# GET (MOBILE apps)
-@app.route('/api/', methods=["GET"], strict_slashes=False)
-def GET():
-    username = request.args.get('username')
-    userDate =request.args.get('date')
-    print(username, file=sys.stderr)
-    print(userDate, file=sys.stderr)
-    conn = get_db_connection()
-    workouts = conn.execute('SELECT * FROM workouts WHERE username = ? And created = ?',(username,userDate)).fetchall()
-    conn.close()
-    large ={}
-    i = 0
-    for x in workouts:
-      small ={}
-      small['exercise'] = str(x['exercise'])
-      small['weight'] = str(x['weight'])
-      small['totalweight'] = x['totalweight']
-      small['repititions'] = x['repititions']
-      small ['time'] = x['time']
-      small ['created'] = x['created']
-      large[i] = small 
-      i = i+1
+    finally:
+        conn.close()
 
-    has_items = bool(large)
-    if has_items:
-      print(large, file=sys.stderr)
-      return jsonify(large)
-    else:
-      small ={}
-      small['exercise'] = "null"
-      small['weight'] ="null"
-      small['repititions'] = "null"
-      small ['time'] = "null"
-      small ['created'] = "null"
-      large[0] = small
-      print("NULL", file=sys.stderr)
-      return jsonify(large)
-    
-# RUN
-def run():
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(host='0.0.0.0', port=7000)
-    # app.run(host='10.1.3.179',port=3000,debug=True)
+    return inserted_user
 
-t = Thread(target=run)
-t.start()
+def get_users():
+    users = []
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users")
+        rows = cur.fetchall()
+
+        # convert row objects to dictionary
+        for i in rows:
+            user = {}
+            user["username"] = i["username"]
+            user["password"] = i["password"]
+            user["height"] = i["height"]
+            user["weight"] = i["weight"]
+            user["age"] = i["age"]
+            users.append(user)
+    except:
+        print('EMPTY USERS')
+        users = []
+    return users
+
+def get_user_by_username(username):
+    user = {}
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE username = ?", 
+                       (username,))
+        row = cur.fetchone()
+        # convert row object to dictionary
+        user["username"] = row["username"]
+        user["password"] = row["password"]
+        user["height"] = row["height"]
+        user["weight"] = row["weight"]
+        user["age"] = row["age"]
+    except:
+        user = {}
+    return user
+
+def update_user(user):
+    updated_user = {}
+    try:
+        conn = connect_to_db()
+        cur = conn.cursor()
+        cur.execute("UPDATE users SET password = ?, height = ?, weight = ?, age = ? WHERE username =?",  
+                     (user["password"], user["height"], user["weight"], user["age"], user["username"],))
+        conn.commit()
+        updated_user = get_user_by_username(user["username"])
+    except:
+        conn.rollback()
+        updated_user = {}
+    finally:
+        conn.close()
+    return updated_user
+
+# username is same as username
+def delete_user(username):
+    message = {}
+    try:
+        conn = connect_to_db()
+        conn.execute("DELETE from users WHERE username = ?",     
+                      (username,))
+        conn.commit()
+        message["status"] = "User deleted successfully"
+    except:
+        conn.rollback()
+        message["status"] = "Cannot delete user"
+    finally:
+        conn.close()
+    return message
+
+@app.route('/api/users', methods=['GET'])
+def api_get_users():
+    return jsonify(get_users())
+
+@app.route('/api/users/<username>', methods=['GET'])
+def api_get_user(username):
+    return jsonify(get_user_by_username(username))
+
+@app.route('/api/users/add',  methods = ['POST'])
+def api_add_user():
+    user = request.get_json()
+    return jsonify(insert_user(user))
+
+@app.route('/api/users/update',  methods = ['PUT'])
+def api_update_user():
+    user = request.get_json()
+    return jsonify(update_user(user))
+
+@app.route('/api/users/delete/<username>',  methods = ['DELETE'])
+def api_delete_user(username):
+    return jsonify(delete_user(username))
+# if __name__ == "__main__":
+#     #app.debug = True
+#     #app.run(debug=True)
+#     app.run() #run app

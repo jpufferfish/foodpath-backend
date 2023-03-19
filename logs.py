@@ -1,135 +1,146 @@
-from flask import Flask, request, render_template,jsonify
-from flask_cors import CORS
-from threading import Thread
+# https://levelup.gitconnected.com/full-stack-web-app-with-python-react-and-bootstrap-backend-8592baa6e4eb
+#!/usr/bin/python
 import sqlite3
-import sys
-import os
-import constants
+from flask import Flask, request, jsonify #added to top of file
+from flask_cors import CORS #added to top of file
 
-# sqlite code from
-# https://github.com/cs125-group53/foodpath/blob/master/previous-src/App.tsx
+# app = Flask(__name__)
+from __main__ import app
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Init. flask
-app = Flask('')
-# Cross origin 
-CORS(app)
-os.environ['TZ'] = ('US/EASTERN')
-# Init. sql
-def get_db_connection():
-    connection = sqlite3.connect('logs.db')
-    with open('schema.sql') as f:
-      connection.executescript(f.read())
-    # conn = sqlite3.connect('logs.db')
-    connection.row_factory = sqlite3.Row
-    return connection
-    
-# POST
-@app.route('/create/', methods=('GET', 'POST'), strict_slashes=False)
-def create():
-    args = request.args.get('username')
-    print(args, file=sys.stderr)
-    if request.method == 'POST':
-        data = request.get_json()
-        print(data, file=sys.stderr)
-        exercise = ''
-        weight = ''
-        total_weight=0
-        repititions = ''
-        worktime = ''
-        for x in data:
-          if x["username"] == None:
-            username = 'null'
-          else: 
-            username = x["username"]
+def connect_to_db():
+    conn = sqlite3.connect('database.db')
+    return conn
 
-          if x['exercise'] == None:
-            exercise = 'null,' + exercise
-          else: 
-            exercise = x['exercise']  + "," + exercise
-
-          if x['weight'] == None:
-            weight = 'null,' + weight
-          else: 
-            weight = x['weight'] + "," + (str(weight))
-          
-          if type(x['totalWeight']) == type(100):
-            if x['totalWeight'] > total_weight:
-              total_weight = x['totalWeight']
-          
-          if x['repitions'] == None:
-              repititions = 'null,' + repititions
-          else: 
-            repititions = x['repitions'] + "," + repititions
-
-          worktime = x['time'] + "," + worktime
-          created = x['created']
-        conn = get_db_connection()
-        workouts = conn.execute('SELECT * FROM workouts WHERE username = ? And created = ?', (args,created)).fetchall()
-      
-        is_present = bool(workouts)
-        if is_present:
-            print("Previous workout flag being returned", file=sys.stderr)
-            conn.close()
-            return "ALREADY logged" 
-        conn.execute(
-          'INSERT INTO workouts (username, exercise, weight,repititions,totalweight, time, created ) VALUES (?,?,?,?,?,?,?)',
-          (username, exercise, weight, repititions, total_weight, worktime, created, ))
+def create_db_table():
+    try:
+        conn = connect_to_db()
+        conn.execute( '''CREATE TABLE IF NOT EXISTS logs (
+          log_id INTEGER NOT NULL PRIMARY KEY, 
+          username TEXT, 
+          entry_time DATETIME, 
+          food TEXT);'''
+        )
         conn.commit()
+        print("log table created successfully")
+    except:
+        print("log table creation failed - Maybe table")
+    finally:
         conn.close()
-        
-    return "POSTED!"
 
-# GET (WEB)
-@app.route('/')
-def index():
-    conn = get_db_connection()
-    workouts = conn.execute('SELECT * FROM workouts').fetchall()
-    conn.close()
-    return render_template('webIndex.html', workouts=workouts)
+def insert_log(log):
+    inserted_log = {}
+    try:
+        conn = connect_to_db()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO logs (username, entry_time, food) VALUES (?, ?, ?)"
+                    , (log['username'], log['entry_time'], log['food']) )
+        conn.commit()
+        inserted_log = get_log_by_id(cur.lastrowid)
+    except:
+        conn().rollback()
 
-# GET (MOBILE apps)
-@app.route('/api/', methods=["GET"], strict_slashes=False)
-def GET():
-    username = request.args.get('username')
-    userDate =request.args.get('date')
-    print(username, file=sys.stderr)
-    print(userDate, file=sys.stderr)
-    conn = get_db_connection()
-    workouts = conn.execute('SELECT * FROM workouts WHERE username = ? And created = ?',(username,userDate)).fetchall()
-    conn.close()
-    large ={}
-    i = 0
-    for x in workouts:
-      small ={}
-      small['exercise'] = str(x['exercise'])
-      small['weight'] = str(x['weight'])
-      small['totalweight'] = x['totalweight']
-      small['repititions'] = x['repititions']
-      small ['time'] = x['time']
-      small ['created'] = x['created']
-      large[i] = small 
-      i = i+1
+    finally:
+        conn.close()
 
-    has_items = bool(large)
-    if has_items:
-      print(large, file=sys.stderr)
-      return jsonify(large)
-    else:
-      small ={}
-      small['exercise'] = "null"
-      small['weight'] ="null"
-      small['repititions'] = "null"
-      small ['time'] = "null"
-      small ['created'] = "null"
-      large[0] = small
-      print("NULL", file=sys.stderr)
-      return jsonify(large)
-    
-# RUN
-def run():
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run(host='0.0.0.0', port=7000)
-    # app.run(host='10.1.3.179',port=3000,debug=True)
+    return inserted_log
 
-t = Thread(target=run)
-t.start()
+def get_logs():
+    logs = []
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM logs")
+        rows = cur.fetchall()
+
+        # convert row objects to dictionary
+        for i in rows:
+            log = {}
+            log["log_id"] = i["log_id"]
+            log["username"] = i["username"]
+            log["entry_time"] = i["entry_time"]
+            log["food"] = i["food"]
+            logs.append(log)
+
+    except:
+        logs = []
+
+    return logs
+
+
+def get_log_by_id(log_id):
+    log = {}
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM logs WHERE log_id = ?", 
+                       (log_id,))
+        row = cur.fetchone()
+
+        # convert row object to dictionary
+        log["log_id"] = row["log_id"]
+        log["username"] = row["username"]
+        log["entry_time"] = row["entry_time"]
+        log["food"] = row["food"]
+    except:
+        log = {}
+
+    return log
+
+def update_log(log):
+    updated_log = {}
+    try:
+        conn = connect_to_db()
+        cur = conn.cursor()
+        cur.execute("UPDATE logs SET username = ?, entry_time = ?, food = ? WHERE log_id =?",  
+                     (log["username"], log["entry_time"], log["food"], log["log_id"],))
+        conn.commit()
+        #return the log
+        updated_log = get_log_by_id(log["log_id"])
+
+    except:
+        conn.rollback()
+        updated_log = {}
+    finally:
+        conn.close()
+
+    return updated_log
+
+def delete_log(log_id):
+    message = {}
+    try:
+        conn = connect_to_db()
+        conn.execute("DELETE from logs WHERE log_id = ?",     
+                      (log_id,))
+        conn.commit()
+        message["status"] = "log deleted successfully"
+    except:
+        conn.rollback()
+        message["status"] = "Cannot delete log"
+    finally:
+        conn.close()
+    return message
+
+@app.route('/api/logs', methods=['GET'])
+def api_get_logs():
+    return jsonify(get_logs())
+
+@app.route('/api/logs/<log_id>', methods=['GET'])
+def api_get_log(log_id):
+    return jsonify(get_log_by_id(log_id))
+
+@app.route('/api/logs/add',  methods = ['POST'])
+def api_add_log():
+    log = request.get_json()
+    return jsonify(insert_log(log))
+
+@app.route('/api/logs/update',  methods = ['PUT'])
+def api_update_log():
+    log = request.get_json()
+    return jsonify(update_log(log))
+
+@app.route('/api/logs/delete/<log_id>',  methods = ['DELETE'])
+def api_delete_log(log_id):
+    return jsonify(delete_log(log_id))
