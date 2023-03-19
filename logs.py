@@ -3,7 +3,6 @@
 import sqlite3
 from flask import Flask, request, jsonify #added to top of file
 from flask_cors import CORS #added to top of file
-
 # app = Flask(__name__)
 from __main__ import app
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -16,7 +15,7 @@ def create_db_table():
     try:
         conn = connect_to_db()
         conn.execute( '''CREATE TABLE IF NOT EXISTS logs (
-          log_id INTEGER NOT NULL PRIMARY KEY, 
+          log_id INTEGER PRIMARY KEY NOT NULL, 
           username TEXT, 
           entry_time DATETIME, 
           food TEXT);'''

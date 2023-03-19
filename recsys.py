@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sqlite3
-from flask import Flask
+from flask import Flask, request, jsonify
 import logging, sys, constants
 from flask_cors import CORS #added to top of file
 
@@ -10,12 +10,12 @@ from users import get_user_by_username
 from __main__ import app
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-def weight_loss(username):
+def weight_loss(username, meal_type):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
-    USER_INP = simpledialog.askstring(title="Food Timing",
-                                      prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
+    # USER_INP = simpledialog.askstring(title="Food Timing",
+                                    #   prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     data=pd.read_csv('input.csv')
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -154,8 +154,12 @@ def weight_loss(username):
     t=0
     r=0
     s=0
+
+    # breakfast
     yt=[]
+    # lunch
     yr=[]
+    # dinner
     ys=[]
     for zz in range(5):
         for jj in range(len(weightlosscat)):
@@ -192,17 +196,15 @@ def weight_loss(username):
 
     from sklearn.model_selection import train_test_split
         
-    val=int(USER_INP)
+    # val=int(USER_INP)
     
-    if val==1:
+    if meal_type=='breakfast':
         X_train= weightlossfin
         y_train=yt
-        
-    elif val==2:
+    elif meal_type=='lunch':
         X_train= weightlossfin
         y_train=yr 
-        
-    elif val==3:
+    elif meal_type=='dinner':
         X_train= weightlossfin
         y_train=ys
         
@@ -216,9 +218,11 @@ def weight_loss(username):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
     
-    return Food_itemsdata
+    # return Food_itemsdata
+    return Food_itemsdata[y_pred==2]
 
-def weight_gain(username):
+
+def weight_gain(username, meal_type):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
@@ -389,10 +393,8 @@ def weight_gain(username):
             weightgainfin[s]=np.array(valloc)
             ys.append(dnrlbl[jj])
             s+=1
-
     
     X_test=np.zeros((len(weightgaincat),10),dtype=np.float32)
-
    
     for jj in range(len(weightgaincat)):
         valloc=list(weightgaincat[jj])
@@ -402,20 +404,18 @@ def weight_gain(username):
     
     from sklearn.model_selection import train_test_split
     
-    val=int(USER_INP)
+    # val=int(USER_INP)
     
-    if val==1:
+    if meal_type=='breakfast':
         X_train= weightgainfin
         y_train=yt
-        
-    elif val==2:
+    elif meal_type=='lunch':
         X_train= weightgainfin
         y_train=yr 
-        
-    elif val==3:
+    elif meal_type=='dinner':
         X_train= weightgainfin
         y_train=ys
-   
+
     from sklearn.model_selection import train_test_split
     from sklearn.ensemble import RandomForestClassifier
     
@@ -431,17 +431,14 @@ def weight_gain(username):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
     
-    return Food_itemsdata
+    # return Food_itemsdata
+    return Food_itemsdata[y_pred==2]
 
-# @app.route('/api/', methods=["GET"], strict_slashes=False)
-def healthy():
-    print(" Age: %s\n Weight%s\n Hight%s\n" % (e1.get(), e3.get(), e4.get()))
+
+def maintain_weight(user_id, meal_type):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
-   
-    USER_INP = simpledialog.askstring(title="Food Timing",
-                                      prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     data=pd.read_csv('input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
@@ -490,11 +487,12 @@ def healthy():
     Valapnd=[0]+val
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.iloc[Valapnd]
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.T
-    
-    age=int(e1.get())
-    weight=float(e3.get())
-    height=float(e4.get())
-    bmi = weight/(height**2) 
+        
+    user = get_user_by_username(username)
+    age = user['age']
+    weight = user['weight']
+    height = user['height']
+    bmi = weight/(height**2)
     agewiseinp=0
     
     for lp in range (0,80,20):
@@ -573,8 +571,11 @@ def healthy():
     t=0
     r=0
     s=0
+    # breakfast
     yt=[]
+    # lunch
     yr=[]
+    # dinner
     ys=[]
     for zz in range(5):
         for jj in range(len(healthycat)):
@@ -608,17 +609,15 @@ def healthy():
     
     
     from sklearn.model_selection import train_test_split
-    val=int(USER_INP)
+    # val=int(USER_INP)
     
-    if val==1:
+     if meal_type=='breakfast':
         X_train= healthycatfin
         y_train=yt
-        
-    elif val==2:
+    elif meal_type=='lunch':
         X_train= healthycatfin
-        y_train=yt 
-        
-    elif val==3:
+        y_train=yr 
+    elif meal_type=='dinner':
         X_train= healthycatfin
         y_train=ys
     
@@ -632,12 +631,22 @@ def healthy():
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
+    return Food_itemsdata[y_pred==2]
 
 
+# https://stackabuse.com/get-request-query-parameters-with-flask/
+# an example fetch would include /api/recsys/loss/username?meal_type=breakfast
 @app.route('/api/recsys/loss/<username>', methods=['GET'])
 def api_weight_loss(username):
-    return jsonify(weight_loss(username))
+    meal_type = request.args.get('meal_type')
+    return jsonify(weight_loss(username, meal_type))
 
 @app.route('/api/recsys/gain/<username>', methods=['GET'])
 def api_weight_gain(username):
-    return jsonify(weight_gain(username))
+    meal_type = request.args.get('meal_type')
+    return jsonify(weight_gain(username, meal_type))
+
+@app.route('/api/recsys/maintain/<username>', methods=['GET'])
+def api_weight_gain(username):
+    meal_type = request.args.get('meal_type')
+    return jsonify(maintain_weight(username, meal_type))
