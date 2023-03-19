@@ -610,8 +610,7 @@ def maintain_weight(user_id, meal_type):
     
     from sklearn.model_selection import train_test_split
     # val=int(USER_INP)
-    
-     if meal_type=='breakfast':
+    if meal_type=='breakfast':
         X_train= healthycatfin
         y_train=yt
     elif meal_type=='lunch':
