@@ -13,16 +13,9 @@
 -- );
 
 -- foodpath
-CREATE TABLE IF NOT EXISTS logs (
+CREATE TABLE IF NOT EXISTS Journal (
     entryID INTEGER PRIMARY KEY AUTOINCREMENT, 
     username TEXT, 
     entryTime DATETIME, 
     food TEXT, 
     servings INTEGER);
-    
-    CREATE TABLE IF NOT EXISTS users (
-    userID INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
-    password TEXT,
-    email TEXT,
-    created DATETIME);
