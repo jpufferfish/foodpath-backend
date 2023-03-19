@@ -42,3 +42,7 @@ users.py:
 
 other:
 - [ ] uhh where do we make calls to food api's?
+
+# recsys info:
+https://github.com/frason88/Diet-Recommendation-System-
+"The module works on the basis of K-Means Clustering and Random Forest Classification Algorithms."
