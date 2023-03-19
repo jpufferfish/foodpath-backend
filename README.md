@@ -19,7 +19,7 @@ python3 app.py
 ```
 
 # testing to see what recsys.py does visually:
-'''
+```
 python3 recsys_gui1.py
 ```
 
