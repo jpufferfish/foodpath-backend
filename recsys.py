@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sqlite3
 from flask import Flask, request, jsonify
+import json
 import logging, sys, constants
 from flask_cors import CORS #added to top of file
 
