@@ -1,16 +1,7 @@
-# foodpath backend code
-from flask import Flask
-app = Flask(__name__)
+from tkinter import *
+from tkinter import simpledialog
+main_win = Tk()
 
-# gui imports
-# from tkinter import *
-# from tkinter import simpledialog
-# main_win = Tk()
-
-# maybe we should remove tkinter use, unless maybe to test
-
-# flask backend code
-@app.route('/')
 def Weight_Loss():
     print(" Age : %s Years \n Weight: %s Kg \n Hight: %s m \n" % (e1.get(), e3.get(), e4.get()))
     
@@ -18,18 +9,25 @@ def Weight_Loss():
     import numpy as np
     from sklearn.cluster import KMeans
     import tkinter as tk
-
+    
+    
     ROOT = tk.Tk()
+    
     ROOT.withdraw()
+    
     USER_INP = simpledialog.askstring(title="Food Timing",
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     
+    
     data=pd.read_csv('input.csv')
+    
+    
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
     
     Lunchdata=data['Lunch']
     LunchdataNumpy=Lunchdata.to_numpy()
+    
     Dinnerdata=data['Dinner']
     DinnerdataNumpy=Dinnerdata.to_numpy()
     
@@ -52,6 +50,7 @@ def Weight_Loss():
       if DinnerdataNumpy[i]==1:
         Dinnerfoodseparated.append(Food_itemsdata[i])
         DinnerfoodseparatedID.append(i)
+        
         
     LunchfoodseparatedIDdata = data.iloc[LunchfoodseparatedID]
     LunchfoodseparatedIDdata = LunchfoodseparatedIDdata.T
@@ -227,16 +226,20 @@ def Weight_Loss():
 
 def Weight_Gain():
     print(" Age: %s\n Weight%s\n Hight%s\n" % (e1.get(), e3.get(), e4.get()))
-
+    
+    
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
-    # import tkinter as tk
+    import tkinter as tk
     
     ROOT = tk.Tk()
+    
     ROOT.withdraw()
+   
     USER_INP = simpledialog.askstring(title="Food Timing",
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
+    
     data=pd.read_csv('input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
@@ -281,6 +284,7 @@ def Weight_Gain():
     Valapnd=[0]+val
     breakfastfoodseparatedIDdata=breakfastfoodseparatedIDdata.iloc[Valapnd]
     breakfastfoodseparatedIDdata=breakfastfoodseparatedIDdata.T
+    
     
     DinnerfoodseparatedIDdata = data.iloc[DinnerfoodseparatedID]
     DinnerfoodseparatedIDdata=DinnerfoodseparatedIDdata.T
@@ -423,8 +427,11 @@ def Weight_Gain():
     elif val==3:
         X_train= weightgainfin
         y_train=ys
+    
    
     from sklearn.model_selection import train_test_split
+    
+    
     from sklearn.ensemble import RandomForestClassifier
     
     clf=RandomForestClassifier(n_estimators=100)
@@ -433,31 +440,40 @@ def Weight_Gain():
     
     y_pred=clf.predict(X_test)
     
+    
+    
+    
     print ('SUGGESTED FOOD ITEMS ::')
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
             
+            
 
-@app.route('/')
 def Healthy():
     print(" Age: %s\n Weight%s\n Hight%s\n" % (e1.get(), e3.get(), e4.get()))
     import pandas as pd
     import numpy as np
+    
     from sklearn.cluster import KMeans
     import tkinter as tk
     
     ROOT = tk.Tk()
+    
     ROOT.withdraw()
    
     USER_INP = simpledialog.askstring(title="Food Timing",
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
+    
+    
     data=pd.read_csv('input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
+    
     Lunchdata=data['Lunch']
     LunchdataNumpy=Lunchdata.to_numpy()
+    
     Dinnerdata=data['Dinner']
     DinnerdataNumpy=Dinnerdata.to_numpy()
     
@@ -465,6 +481,7 @@ def Healthy():
     breakfastfoodseparated=[]
     Lunchfoodseparated=[]
     Dinnerfoodseparated=[]
+    
     breakfastfoodseparatedID=[]
     LunchfoodseparatedID=[]
     DinnerfoodseparatedID=[]
@@ -618,6 +635,8 @@ def Healthy():
     
     
     from sklearn.model_selection import train_test_split
+    
+
     val=int(USER_INP)
     
     if val==1:
@@ -631,11 +650,17 @@ def Healthy():
     elif val==3:
         X_train= healthycatfin
         y_train=ys
+        
     
     from sklearn.model_selection import train_test_split
+    
+    
     from sklearn.ensemble import RandomForestClassifier
+    
     clf=RandomForestClassifier(n_estimators=100)
+    
     clf.fit(X_train,y_train)
+    
     y_pred=clf.predict(X_test)
     
     print ('SUGGESTED FOOD ITEMS ::')

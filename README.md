@@ -3,6 +3,14 @@
 ```
 brew install --cask miniconda
 pip install -r requirements.txt
+pip3 install pipreqs
+pip3 install pip-tools 
+conda install pandas  
+conda install ipython
+pip install wheel
+pip install pandas
+pip install sklearn
+pip3 install -U scikit-learn scipy matplotlib
 ```
 
 # testing to see what recsys.py does visually:
