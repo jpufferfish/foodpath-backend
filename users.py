@@ -65,6 +65,7 @@ def get_users():
             user["weight"] = i["weight"]
             user["age"] = i["age"]
             users.append(user)
+        print('get_users success')
     except:
         print('EMPTY USERS')
         users = []
@@ -122,30 +123,30 @@ def delete_user(username):
     return message
 
 from flask_jwt_extended import jwt_required
+@app.route('/users', methods=['GET'])
 @jwt_required()
-@app.route('/api/users', methods=['GET'])
 def api_get_users():
     return jsonify(get_users())
 
+@app.route('/users/<username>', methods=['GET'])
 @jwt_required()
-@app.route('/api/users/<username>', methods=['GET'])
 def api_get_user(username):
     return jsonify(get_user_by_username(username))
 
+@app.route('/users/add',  methods = ['POST'])
 @jwt_required()
-@app.route('/api/users/add',  methods = ['POST'])
 def api_add_user():
     user = request.get_json()
     return jsonify(insert_user(user))
 
+@app.route('/users/update',  methods = ['PUT'])
 @jwt_required()
-@app.route('/api/users/update',  methods = ['PUT'])
 def api_update_user():
     user = request.get_json()
     return jsonify(update_user(user))
 
+@app.route('/users/delete/<username>',  methods = ['DELETE'])
 @jwt_required()
-@app.route('/api/users/delete/<username>',  methods = ['DELETE'])
 def api_delete_user(username):
     return jsonify(delete_user(username))
 # if __name__ == "__main__":

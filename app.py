@@ -27,5 +27,6 @@ import auth
 import constants
 
 if __name__ == '__main__':
-    # app.run(host=constants.DEFAULT_HOST, port=constants.DEFAULT_PORT, debug=constants.DEFAULT_DEBUG)
-    app.run()
+    print('starting')
+    app.run(host=constants.DEFAULT_HOST, port=constants.DEFAULT_PORT, debug=constants.DEFAULT_DEBUG)
+    # app.run()

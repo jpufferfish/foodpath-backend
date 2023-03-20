@@ -123,29 +123,29 @@ def delete_log(log_id):
     return message
 
 from flask_jwt_extended import jwt_required
+@app.route('/logs', methods=['GET'])
 @jwt_required()
-@app.route('/api/logs', methods=['GET'])
 def api_get_logs():
     return jsonify(get_logs())
 
+@app.route('/logs/<log_id>', methods=['GET'])
 @jwt_required()
-@app.route('/api/logs/<log_id>', methods=['GET'])
 def api_get_log(log_id):
     return jsonify(get_log_by_id(log_id))
 
+@app.route('/logs/add',  methods = ['POST'])
 @jwt_required()
-@app.route('/api/logs/add',  methods = ['POST'])
 def api_add_log():
     log = request.get_json()
     return jsonify(insert_log(log))
 
 @jwt_required()
-@app.route('/api/logs/update',  methods = ['PUT'])
+@app.route('/logs/update',  methods = ['PUT'])
 def api_update_log():
     log = request.get_json()
     return jsonify(update_log(log))
 
 @jwt_required()
-@app.route('/api/logs/delete/<log_id>',  methods = ['DELETE'])
+@app.route('/logs/delete/<log_id>',  methods = ['DELETE'])
 def api_delete_log(log_id):
     return jsonify(delete_log(log_id))
