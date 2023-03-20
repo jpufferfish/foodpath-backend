@@ -44,5 +44,6 @@ other:
 - [ ] uhh where do we make calls to food api's?
 
 # recsys info:
-Heavy modification of https://github.com/frason88/Diet-Recommendation-System- to make it work with our app, backend data sources, etc. 
+Heavy modification of 
+https://github.com/frason88/Diet-Recommendation-System- to make it work with our app, backend data sources, etc. 
 "The module works on the basis of K-Means Clustering and Random Forest Classification Algorithms."
