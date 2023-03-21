@@ -8,7 +8,7 @@ from __main__ import app
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 def connect_to_db():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('database.db', timeout=10)
     return conn
 
 # CRUD
@@ -18,15 +18,15 @@ def create_db_table():
         print('conn: ', conn)
         conn.execute('''
 CREATE TABLE IF NOT EXISTS users (
-             username TEXT,
-             email TEXT,
+            username TEXT PRIMARY KEY NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
             height REAL NOT NULL,
             weight INTEGER NOT NULL,
-            age INTEGER NOT NULL,
-            PRIMARY KEY (username, email)
+            age INTEGER NOT NULL
             );
         ''')
+        conn.execute("CREATE UNIQUE CLUSTERED INDEX index_name ON users (username, email)")
         conn.commit()
         print("User table created successfully")
     except Exception as e:
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS users (
 def insert_user(user):
     # print(user)
     create_db_table()
+    print(user)
     inserted_user = {}
     try:
         conn = connect_to_db()
@@ -48,8 +49,13 @@ def insert_user(user):
         cur.execute("INSERT INTO users (username, email, password, height, weight, age) VALUES (?, ?, ?, ?, ?, ?)"
                     , (user['username'], user['email'], user['password'], int(user['height'])/100, int(user['weight']), int(user['age'])) )
         conn.commit()
-        inserted_user = get_user_by_username(cur.lastrowid)
-    except:
+        inserted_user = user
+        print('inserted user')
+        print(inserted_user)
+    except Exception as e:
+        print('insert user error')
+        print(e)
+        print(user)
         conn().rollback()
     finally:
         conn.close()
@@ -86,9 +92,12 @@ def get_user_by_username(username):
         conn = connect_to_db()
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
+        print('selecting user by username'+username)
         cur.execute("SELECT * FROM users WHERE username = ?", 
                        (username,))
         row = cur.fetchone()
+        print('row')
+        print(row)
         # convert row object to dictionary
         user["username"] = row["username"]
         user['email'] = row['email']
@@ -96,7 +105,9 @@ def get_user_by_username(username):
         user["height"] = row["height"]
         user["weight"] = row["weight"]
         user["age"] = row["age"]
-    except:
+    except Exception as e:
+        print('error in get_user_by_username')
+        print(e)
         user = {}
     return user
 
@@ -147,6 +158,9 @@ def api_get_user(username):
 @app.route('/users/add',  methods = ['POST'])
 def api_add_user():
     user = request.get_json()
+    print('user add')
+    print(user)
+    create_db_table()
     return jsonify(insert_user(user))
 
 @app.route('/users/update',  methods = ['PUT'])
