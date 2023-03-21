@@ -15,36 +15,44 @@ def connect_to_db():
 def create_db_table():
     try:
         conn = connect_to_db()
-        conn.execute( '''CREATE TABLE users (
-          username TEXT PRIMARY KEY NOT NULL,
-          password TEXT NOT NULL,
-          height INTEGER NOT NULL
-          weight INTEGER NOT NULL
-          age INTEGER NOT NULL
-          );'''
-        )
+        print('conn: ', conn)
+        conn.execute('''
+CREATE TABLE IF NOT EXISTS users (
+             username TEXT,
+             email TEXT,
+            password TEXT NOT NULL,
+            height REAL NOT NULL,
+            weight INTEGER NOT NULL,
+            age INTEGER NOT NULL,
+            PRIMARY KEY (username, email)
+            );
+        ''')
         conn.commit()
         print("User table created successfully")
-    except:
-        print("User table creation failed - Maybe table")
+    except Exception as e:
+        print('error')
+        print(e)
+        # print("User table creation failed - Maybe table")
     finally:
+        print('finally')
         conn.close()
 
+# inserting json
 def insert_user(user):
+    # print(user)
+    create_db_table()
     inserted_user = {}
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("INSERT INTO users (username, password, height, weight, age) VALUES (?, ?, ?, ?, ?)"
-                    , (user['username'], user['password']), user['height'], user['weight'], user['age'] )
+        cur.execute("INSERT INTO users (username, email, password, height, weight, age) VALUES (?, ?, ?, ?, ?, ?)"
+                    , (user['username'], user['email'], user['password'], int(user['height'])/100, int(user['weight']), int(user['age'])) )
         conn.commit()
         inserted_user = get_user_by_username(cur.lastrowid)
     except:
         conn().rollback()
-
     finally:
         conn.close()
-
     return inserted_user
 
 def get_users():
@@ -60,6 +68,7 @@ def get_users():
         for i in rows:
             user = {}
             user["username"] = i["username"]
+            user["email"] = i["email"]
             user["password"] = i["password"]
             user["height"] = i["height"]
             user["weight"] = i["weight"]
@@ -82,6 +91,7 @@ def get_user_by_username(username):
         row = cur.fetchone()
         # convert row object to dictionary
         user["username"] = row["username"]
+        user['email'] = row['email']
         user["password"] = row["password"]
         user["height"] = row["height"]
         user["weight"] = row["weight"]
@@ -95,8 +105,8 @@ def update_user(user):
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("UPDATE users SET password = ?, height = ?, weight = ?, age = ? WHERE username =?",  
-                     (user["password"], user["height"], user["weight"], user["age"], user["username"],))
+        cur.execute("UPDATE users SET email = ?, password = ?, height = ?, weight = ?, age = ? WHERE username =?",  
+                     (user['email'], user["password"], user["height"], user["weight"], user["age"], user["username"],))
         conn.commit()
         updated_user = get_user_by_username(user["username"])
     except:
@@ -133,8 +143,8 @@ def api_get_users():
 def api_get_user(username):
     return jsonify(get_user_by_username(username))
 
+# doesnt need jwt
 @app.route('/users/add',  methods = ['POST'])
-@jwt_required()
 def api_add_user():
     user = request.get_json()
     return jsonify(insert_user(user))

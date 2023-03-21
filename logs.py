@@ -14,11 +14,11 @@ def connect_to_db():
 def create_db_table():
     try:
         conn = connect_to_db()
-        conn.execute( '''CREATE TABLE IF NOT EXISTS logs (
+        conn.execute('''CREATE TABLE IF NOT EXISTS logs (
           log_id INTEGER PRIMARY KEY NOT NULL, 
-          username TEXT, 
-          entry_time DATETIME, 
-          food TEXT);'''
+          username TEXT NOT NULL, 
+          entry_time DATETIME NOT NULL, 
+          food TEXT NOT NULL);'''
         )
         conn.commit()
         print("log table created successfully")
