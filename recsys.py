@@ -1,11 +1,9 @@
 #!/usr/bin/python
-import sqlite3
+import sqlite3, csv
 from flask import Flask, request, jsonify
 import json
 import logging, sys, constants
 from flask_cors import CORS #added to top of file
-
-import csv
 
 from users import get_user_by_username
 
@@ -78,6 +76,7 @@ def weight_loss(username, meal_type):
     weight = user['weight']
     height = user['height']
     bmi = weight/(height**2)
+    # print(age, weight, height, bmi)
     
     for lp in range (0,80,20):
         test_list=np.arange(lp,lp+20)
@@ -216,13 +215,17 @@ def weight_loss(username, meal_type):
     clf.fit(X_train,y_train)
     y_pred=clf.predict(X_test)
         
+    result = []
     print ('Food_itemsdata weightloss ::')
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
+            result.append(Food_itemsdata[ii])
+    # return Food_itemsdata[y_pred==2]
+    return result
     
     # return Food_itemsdata
-    return Food_itemsdata[y_pred==2]
+    # return Food_itemsdata[y_pred==2]
 
 
 def weight_gain(username, meal_type):
@@ -230,8 +233,8 @@ def weight_gain(username, meal_type):
     import numpy as np
     from sklearn.cluster import KMeans
 
-    USER_INP = simpledialog.askstring(title="Food Timing",
-                                      prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
+    # USER_INP = simpledialog.askstring(title="Food Timing",
+                                    #   prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     data=pd.read_csv('input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
@@ -428,17 +431,21 @@ def weight_gain(username, meal_type):
     
     y_pred=clf.predict(X_test)
     
-    print ('Food_itemsdata gain::')
-    print (Food_itemsdata)
+    # print ('Food_itemsdata gain::')
+    # print (Food_itemsdata)
+    result= []
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
+            result.append(Food_itemsdata[ii])
+    # return Food_itemsdata[y_pred==2]
+    return result
     
     # return Food_itemsdata
-    return Food_itemsdata[y_pred==2]
+    # return Food_itemsdata[y_pred==2]
 
 
-def maintain_weight(user_id, meal_type):
+def weight_maintain(user_id, meal_type):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
@@ -629,30 +636,47 @@ def maintain_weight(user_id, meal_type):
     clf.fit(X_train,y_train)
     y_pred=clf.predict(X_test)
     
+    result = []
     print ('SUGGESTED FOOD ITEMS ::')
     for ii in range(len(y_pred)):
         if y_pred[ii]==2:
             print (Food_itemsdata[ii])
-    return Food_itemsdata[y_pred==2]
+            result.append(Food_itemsdata[ii])
+    # return Food_itemsdata[y_pred==2]
+    return result
 
 
 from flask_jwt_extended import jwt_required
 # https://stackabuse.com/get-request-query-parameters-with-flask/
 # an example fetch would include /api/recsys/loss/username?meal_type=breakfast
-@app.route('/api/recsys/loss/<username>', methods=['GET'])
-@jwt_required()
-def api_weight_loss(username):
-    meal_type = request.args.get('meal_type')
-    return jsonify(weight_loss(username, meal_type))
+@app.route('/recsys', methods=['GET'])
+# @jwt_required()
+def api_weight():
+    username = request.args.get('username')
+    mealtype = request.args.get('mealtype')
+    goal = request.args.get('goal')
+    mealtype = int(mealtype) + 1
+    if mealtype == 1:
+        mealtype = 'breakfast'
+    elif mealtype == 2:
+        mealtype = 'lunch'
+    elif mealtype == 3:
+        mealtype = 'dinner'
+    print(username, mealtype, goal)
+    if goal == '1':
+        # return weight_loss(username, mealtype)
+        return weight_loss(username, mealtype)
+    elif goal == '2':
+        return jsonify(weight_gain(username, mealtype))
+    elif goal == '3':
+        return weight_maintain(username, mealtype)
 
-@app.route('/api/recsys/gain/<username>', methods=['GET'])
-@jwt_required()
-def api_weight_gain(username):
-    meal_type = request.args.get('meal_type')
-    return jsonify(weight_gain(username, meal_type))
+# @app.route('/recsys/loss/<username>/<mealtype>', methods=['GET'])
+# # @jwt_required()
+# def api_weight_gain(username, mealtype):
+#     return jsonify(weight_gain(username, mealtype))
 
-@app.route('/api/recsys/maintain/<username>', methods=['GET'])
-@jwt_required()
-def api_weight_maintain(username):
-    meal_type = request.args.get('meal_type')
-    return jsonify(maintain_weight(username, meal_type))
+# @app.route('/recsys/loss/<username>/<mealtype>', methods=['GET'])
+# # @jwt_required()
+# def api_weight_maintain(username, mealtype):
+#     return jsonify(weight_maintain(username, mealtype))
