@@ -1,4 +1,14 @@
 
+Backend consisting of flask for defining a custom REST API, ran on localhost for the foodpath app prototype (in react native expo). Frontend is in a private repository, so the result of it is shown below.
+
+# Demos
+Frontend + backend
+
+
+Backend
+
+
+
 # installing packages mac (might not be all of them)
 ```
 brew install --cask miniconda

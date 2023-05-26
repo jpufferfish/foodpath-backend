@@ -34,10 +34,8 @@ def refresh_expiring_jwts(response):
 
 @app.route('/token', methods=["POST"])
 def create_token():
-    # print('request.json:'+str(request.json))
     username = request.json.get("username", None)
     user = get_user_by_username(username)
-    # print('user:'+str(user))
     password = request.json.get("password", None)
     if username != user['username'] or password != user['password']:
         return {"msg": "Wrong email or password"}, 401
@@ -51,11 +49,5 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
-# @app.route('/profile')
-# @jwt_required()
-# def my_profile():
-#     print('profile')
-#     response_body = {
-#     }
-#     return response_body
+
 

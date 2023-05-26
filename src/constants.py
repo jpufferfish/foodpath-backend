@@ -1,3 +1,5 @@
+
+# note that mobile simulators might have error-causing port numbers
 DEFAULT_DB = 'database.db'
 DEFAULT_IP_ADDRESS = '0.0.0.0'
 DEFAULT_PORT = 5000

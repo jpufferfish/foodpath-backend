@@ -10,10 +10,6 @@ from flask_jwt_extended import jwt_required
 from datetime import datetime, timedelta
 from enum import Enum
 import pandas as pd
-# class mealtype(Enum):
-#     BREAKFAST = 0
-#     LUNCH = 1
-#     DINNER = 2
 
 # super messy but no time
 # only adding a SINGULAR FOOD, so dont even need to POST the whole seqrch query reponse from fdc
@@ -121,37 +117,6 @@ def api_add_log():
 @jwt_required()
 def api_clear_csv():
     return
-
-# dont have to return the json of the usda api foods, just the food names
-# because of just displaying history of logs
-# when adding to this backend though, the specific food data will be added to csv
-# def get_logs_by_username(username):
-#     log = {}
-#     try:
-#         conn = connect_to_db()
-#         conn.row_factory = sqlite3.Row
-#         cur = conn.cursor()
-#         cur.execute("SELECT * FROM users WHERE username = ?", (username,))
-#         row = cur.fetchone()
-#         # convert row object to dictionary (but nested?)
-#         log["timestamp"] = row["timestamp"]
-#         log["username"] = row["username"]
-#         log["entry_time"] = row["entry_time"]
-#         log["food"] = row["food"]
-#         todos = conn.execute('SELECT i.content, l.title FROM items i JOIN lists l \
-#                         ON i.list_id = l.id ORDER BY l.title;').fetchall()
-#         lists = {}
-#         for k, g in groupby(todos, key=lambda t: t['title']):
-#             lists[k] = list(g)
-#     except:
-#         log = {}
-
-#     return log
-
-# @app.route('/logs/<username>', methods=['GET'])
-# @jwt_required()
-# def api_get_logs(username):
-#     return jsonify(get_logs_by_username(username))
 
 # def 
 #     switch(key){
