@@ -1,1 +1,6 @@
+
+# misc and meta directories
 .history/
+.idea/
+.vscode/
+__pycache__/
