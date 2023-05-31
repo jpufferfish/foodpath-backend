@@ -1,11 +1,11 @@
 
-Backend consisting of flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my foodpath app (react native expo). Frontend is in a private repository.
+Backend using flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my foodpath app (react native expo). Frontend is in a private repository.
 
 # Demos
 Frontend + backend:
 (in-progress)
 
-Backend:
+Recommendation system:
 <img src='recsys_gui1.gif' width=1000 title='Reccomendation system GUI' width='' alt='Video Walkthrough' />
 
 
