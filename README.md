@@ -6,7 +6,7 @@ Frontend + backend:
 (in-progress)
 
 Recommendation system:
-<img src='recsys_gui1.gif' width=1000 title='Reccomendation system GUI' width='' alt='Video Walkthrough' />
+<img src='demos/recsys_gui1.gif' width=1000 title='Reccomendation system GUI' width='' alt='Video Walkthrough' />
 
 
 # installing packages on mac (might not be all of them)
