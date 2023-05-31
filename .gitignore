@@ -6,3 +6,4 @@
 __pycache__/
 .breakpoints
 src/__pycache__/
+.DS_Store
