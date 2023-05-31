@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 from enum import Enum
 import pandas as pd
 
+input_csv = '../data/input.csv'
+input_fin_csv = '../data/inputfin.csv'
+
 # super messy but no time
 # only adding a SINGULAR FOOD, so dont even need to POST the whole seqrch query reponse from fdc
 def insert_into_csv(mealtype, description, nutrients):
@@ -37,15 +40,15 @@ def insert_into_csv(mealtype, description, nutrients):
             sodium = nutrient['value'] if nutrient['unitName'] == 'mg' else nutrient['value']/1000
         elif nutrient['nutrientName'] == 'Vitamin D (D2 + D3)':
             vitaminD = nutrient['value'] if nutrient['unitName'] == 'mcg' else nutrient['value']/1000
-    with open('input.csv', 'a') as csv_file:
+    with open(input_csv, 'a') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow([description, 1 if mealtype==0 else 0, 1 if mealtype==1 else 0, 1 if mealtype==2 else 0, 0,
                             energy, fat, protein, iron, calcium, sodium, potassium, carbs, fiber, vitaminD, sugars])
-    with open('inputfin.csv', 'a') as csv_file:
+    with open(input_fin_csv, 'a') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(energy, fat, protein, iron, calcium, sodium, potassium, carbs, fiber, vitaminD, sugars)
-    remove_csv_duplicate_rows('input.csv')
-    remove_csv_duplicate_rows('inputfin.csv')
+    remove_csv_duplicate_rows(input_csv)
+    remove_csv_duplicate_rows(input_fin_csv)
     return
 
 def remove_csv_duplicate_rows(filename):
@@ -55,7 +58,7 @@ def remove_csv_duplicate_rows(filename):
 
 # https://charlesleifer.com/blog/going-fast-with-sqlite-and-python/
 def connect_to_db():
-    conn = sqlite3.connect('database.db', timeout=10, isolation_level=None)
+    conn = sqlite3.connect('../data/database.db', timeout=10, isolation_level=None)
     conn.execute('pragma journal_mode=wal')
     return conn
 

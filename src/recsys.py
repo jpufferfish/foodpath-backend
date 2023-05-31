@@ -17,7 +17,7 @@ def weight_loss(username, meal_type):
     from sklearn.cluster import KMeans
     # USER_INP = simpledialog.askstring(title="Food Timing",
                                     #   prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
     
@@ -235,7 +235,7 @@ def weight_gain(username, meal_type):
 
     # USER_INP = simpledialog.askstring(title="Food Timing",
                                     #   prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -449,7 +449,7 @@ def weight_maintain(user_id, meal_type):
     import pandas as pd
     import numpy as np
     from sklearn.cluster import KMeans
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()

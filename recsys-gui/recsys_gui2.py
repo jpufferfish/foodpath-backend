@@ -34,7 +34,7 @@ def Weight_Loss():
     # In[44]:
 
     ## Reading of the Dataet
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     
 
@@ -206,7 +206,7 @@ def Weight_Loss():
     # plt.title("Predicted Low-High Weigted Calorie Foods")
     inp=[]
     ## Reading of the Dataet
-    datafin=pd.read_csv('inputfin.csv')
+    datafin=pd.read_csv('../data/inputfin.csv')
     datafin.head(5)
     ## train set
     #arrayfin=[agecl,clbmi,]
@@ -331,7 +331,7 @@ def Weight_Gain():
     import numpy as np
     # # New Section
     ## Reading of the Dataet
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -497,7 +497,7 @@ def Weight_Gain():
     # plt.title("Predicted Low-High Weigted Calorie Foods")
     inp=[]
     ## Reading of the Dataet
-    datafin=pd.read_csv('inputfin.csv')
+    datafin=pd.read_csv('../data/inputfin.csv')
     datafin.head(5)
     ## train set
     #arrayfin=[agecl,clbmi,]
@@ -620,7 +620,7 @@ def Healthy():
     import numpy as np
     # # New Section
     ## Reading of the Dataet
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -786,7 +786,7 @@ def Healthy():
     # plt.title("Predicted Low-High Weigted Calorie Foods")
     inp=[]
     ## Reading of the Dataet
-    datafin=pd.read_csv('inputfin.csv')
+    datafin=pd.read_csv('../data/inputfin.csv')
     datafin.head(5)
     ## train set
     #arrayfin=[agecl,clbmi,]

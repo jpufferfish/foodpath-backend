@@ -8,7 +8,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 # https://charlesleifer.com/blog/going-fast-with-sqlite-and-python/
 def connect_to_db():
-    conn = sqlite3.connect('database.db', timeout=10, isolation_level=None)
+    conn = sqlite3.connect('../data/database.db', timeout=10, isolation_level=None)
     conn.execute('pragma journal_mode=wal')
     return conn
 

@@ -19,7 +19,7 @@ def Weight_Loss():
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     
     
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     
     
     Breakfastdata=data['Breakfast']
@@ -129,7 +129,7 @@ def Weight_Loss():
     brklbl=kmeans.labels_
     
     ## Reading of the Dataset
-    datafin=pd.read_csv('inputfin.csv')
+    datafin=pd.read_csv('../data/../data/inputfin.csv')
     
     dataTog=datafin.T
 
@@ -240,7 +240,7 @@ def Weight_Gain():
     USER_INP = simpledialog.askstring(title="Food Timing",
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -352,7 +352,7 @@ def Weight_Gain():
     brklbl=kmeans.labels_
     
     inp=[]
-    datafin=pd.read_csv('inputfin.csv')
+    datafin=pd.read_csv('../data/../data/inputfin.csv')
     datafin.head(5)
     dataTog=datafin.T
     bmicls=[0,1,2,3,4]
@@ -466,7 +466,7 @@ def Healthy():
                                       prompt="Enter 1 for Breakfast, 2 for Lunch and 3 for Dinner")
     
     
-    data=pd.read_csv('input.csv')
+    data=pd.read_csv('../data/input.csv')
     data.head(5)
     Breakfastdata=data['Breakfast']
     BreakfastdataNumpy=Breakfastdata.to_numpy()
@@ -576,7 +576,7 @@ def Healthy():
     XValu=np.arange(0,len(kmeans.labels_))
     brklbl=kmeans.labels_
     inp=[]
-    datafin=pd.read_csv('inputfin.csv')
+    datafin=pd.read_csv('../data/../data/inputfin.csv')
     datafin.head(5)
     dataTog=datafin.T
     bmicls=[0,1,2,3,4]
