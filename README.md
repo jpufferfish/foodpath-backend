@@ -1,3 +1,4 @@
+https://github.com/jpufferfish/foodpath-backend
 
 [In-progress]: Backend using flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my meal recommendation app (react native expo). Frontend is in a private repository.
 
