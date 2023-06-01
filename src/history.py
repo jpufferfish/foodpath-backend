@@ -1,15 +1,14 @@
 # https://levelup.gitconnected.com/full-stack-web-app-with-python-react-and-bootstrap-backend-8592baa6e4eb
 #!/usr/bin/python
-import sqlite3, csv
-from flask import Flask, request, jsonify #added to top of file
-from flask_cors import CORS #added to top of file
-# app = Flask(__name__)
 from __main__ import app
-CORS(app, resources={r"/*": {"origins": "*"}})
+from flask import Flask, request, jsonify
 from flask_jwt_extended import jwt_required
 from datetime import datetime, timedelta
 from enum import Enum
 import pandas as pd
+import sqlite3, csv
+
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 input_csv = '../data/input.csv'
 input_fin_csv = '../data/inputfin.csv'
@@ -69,13 +68,7 @@ def connect_to_db():
 def create_db_table():
     try:
         conn = connect_to_db()
-        conn.execute('''CREATE TABLE IF NOT EXISTS history (
-          timestamp TIMESTAMP PRIMARY KEY NOT NULL UNIQUE DEFAULT CURRENT_TIMESTAMP, 
-          food TEXT NOT NULL,
-          mealtype TEXT CHECK( pType IN ('BREAKFAST', 'LUNCH', 'DINNER' )
-          FOREIGN KEY (username) REFERENCES users(username)
-          );'''
-        )
+        conn.execute()
         conn.commit()
         print("log table created successfully")
     except:
@@ -103,10 +96,30 @@ def insert_log(username, log, nutrients):
     finally:
         conn.close()
 
+# currently all user's logs
+@app.route('/history/history', methods=['GET'])
+def get_history():
+    history = []
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM history")
+        rows = cur.fetchall()
+        # convert row objects to dictionary
+        for i in rows:
+            user = {}
+            user["username"] = i["username"]
+            users.append(user)
+    except:
+        print('EMPTY logs')
+        users = []
+    return users
+
 # QUERY PARAMS, so for example: /logs?username=ted&mealtype=0&nutrients=...
 # https://tedboy.github.io/flask/generated/generated/flask.Request.get_json.html
 @app.route('/history/add',  methods = ['POST'])
-@jwt_required()
+# @jwt_required()
 def api_add_log():
     args = request.args
     print('LOG ARGS: ', str(args))
@@ -117,7 +130,7 @@ def api_add_log():
     return jsonify(insert_log(username, log, nutrients))
 
 @app.route('/csv/clear')
-@jwt_required()
+# @jwt_required()
 def api_clear_csv():
     return
 

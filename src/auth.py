@@ -1,14 +1,14 @@
 
 # https://dev.to/nagatodev/how-to-add-login-authentication-to-a-flask-and-react-application-23i7
+from __main__ import app
 import json
 from flask import Flask, request, jsonify
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
                                unset_jwt_cookies, jwt_required, JWTManager
+from users import get_user_by_username
 
-from users import CORS, get_user_by_username
-from __main__ import app
-CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 # https://www.grc.com/passwords.htm
 app.config["JWT_SECRET_KEY"] = "F44DC3A9A5E5D58BBB448A06A1158D7535AA6452C989274B7A7BB6743D226ECC"

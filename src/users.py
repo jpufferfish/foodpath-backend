@@ -1,10 +1,10 @@
 # https://levelup.gitconnected.com/full-stack-web-app-with-python-react-and-bootstrap-backend-8592baa6e4eb
 #!/usr/bin/python
-import sqlite3, csv
-from flask import Flask, request, jsonify #added to top of file
-from flask_cors import CORS #added to top of file
 from __main__ import app
-CORS(app, resources={r"/*": {"origins": "*"}})
+from flask import Flask, request, jsonify 
+import sqlite3, csv
+
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 # https://charlesleifer.com/blog/going-fast-with-sqlite-and-python/
 def connect_to_db():
@@ -16,7 +16,7 @@ def create_db_table():
     try:
         conn = connect_to_db()
         conn.execute('''
-CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS users (
             username TEXT PRIMARY KEY NOT NULL UNIQUE,
             email TEXT NOT NULL UNIQUE,
             password TEXT NOT NULL,
@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 # inserting json
 def insert_user(user):
+    print('insert_user')
     create_db_table()
     inserted_user = {}
     try:
@@ -49,28 +50,29 @@ def insert_user(user):
         conn.close()
     return inserted_user
 
-# def get_users():
-#     users = []
-#     try:
-#         conn = connect_to_db()
-#         conn.row_factory = sqlite3.Row
-#         cur = conn.cursor()
-#         cur.execute("SELECT * FROM users")
-#         rows = cur.fetchall()
-#         # convert row objects to dictionary
-#         for i in rows:
-#             user = {}
-#             user["username"] = i["username"]
-#             user["email"] = i["email"]
-#             user["password"] = i["password"]
-#             user["height"] = i["height"]
-#             user["weight"] = i["weight"]
-#             user["age"] = i["age"]
-#             users.append(user)
-#     except:
-#         print('EMPTY USERS')
-#         users = []
-#     return users
+# realisitically this prob wouldnt be used, except for debugging
+def get_users():
+    users = []
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users")
+        rows = cur.fetchall()
+        # convert row objects to dictionary
+        for i in rows:
+            user = {}
+            user["username"] = i["username"]
+            user["email"] = i["email"]
+            user["password"] = i["password"]
+            user["height"] = i["height"]
+            user["weight"] = i["weight"]
+            user["age"] = i["age"]
+            users.append(user)
+    except:
+        print('EMPTY USERS')
+        users = []
+    return users
 
 def get_user_by_username(username):
     user = {}
@@ -128,11 +130,12 @@ def get_user_by_username(username):
 
 from flask_jwt_extended import jwt_required
 
-# @app.route('/users', methods=['GET'])
+# turning off all JWT for temp testing
+
+@app.route('/users', methods=['GET'])
 # @jwt_required()
-# # realisitically this prob wouldnt be used
-# def api_get_users():
-#     return jsonify(get_users())
+def api_get_users():
+    return jsonify(get_users())
 
 @app.route('/users/<username>', methods=['GET'])
 # @jwt_required()
@@ -142,6 +145,7 @@ def api_get_user(username):
 # doesnt need jwt
 @app.route('/users/add',  methods = ['POST'])
 def api_add_user():
+    print('api_add_user')
     user = request.get_json()
     return jsonify(insert_user(user))
 

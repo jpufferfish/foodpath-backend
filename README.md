@@ -1,5 +1,5 @@
 
-Backend using flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my meal recommendation app (react native expo). Frontend is in a private repository.
+[In-progress]: Backend using flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my meal recommendation app (react native expo). Frontend is in a private repository.
 
 # Demos
 Frontend + backend:
@@ -7,7 +7,6 @@ Frontend + backend:
 
 Recommendation system:
 <img src='demos/recsys_gui1.gif' width=1000 title='Reccomendation system GUI' width='' alt='Video Walkthrough' />
-
 
 # installing packages on mac (might not be all of them)
 ```
@@ -23,7 +22,7 @@ pip install sklearn
 pip3 install -U scikit-learn scipy matplotlib
 ```
 
-# running
+# running server
 ```
 cd src
 python3 app.py
@@ -39,16 +38,23 @@ TODO:
 put x in each box (no spaces) when done
 
 history.py:
-- [ ] programatically appending log data to the csv to hopefully improve the recsys
+- [ ] majority is broken ATM
+- [ ] programatically appending food data to the csv to improve the recsys
+- [ ] try to rename 'history' to 'logs'(?)
 
 recsys.py:
 - [ ] 
 
 users.py:
-- [ ] https connection
+- [ ] user updates such as pw changes, deletion, etc
+- [ ] https connection (e.g user registration POST w/ password)
 
 other:
 - [ ] split sqlite tables into separate .db files
+- [ ] sort out CORS usage
+- [ ] pytest or unittest
+- [ ] debug environment variables
+- [ ] programatically assign sqlite3 conn's to values derived from .sql files
 
 # recsys info:
 Modification of 
