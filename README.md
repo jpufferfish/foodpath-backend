@@ -1,5 +1,5 @@
 
-Backend using flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my foodpath app (react native expo). Frontend is in a private repository.
+Backend using flask for defining a custom REST API, and SQLite for storage. Ran on localhost for my meal recommendation app (react native expo). Frontend is in a private repository.
 
 # Demos
 Frontend + backend:
@@ -38,17 +38,17 @@ python3 recsys_gui1.py
 TODO:
 put x in each box (no spaces) when done
 
-logs.py:
-- [ ]
+history.py:
+- [ ] programatically appending log data to the csv to hopefully improve the recsys
 
 recsys.py:
-- [ ]
+- [ ] 
 
 users.py:
-- [ ]
+- [ ] https connection
 
 other:
-- [ ] 
+- [ ] split sqlite tables into separate .db files
 
 # recsys info:
 Modification of 
