@@ -46,6 +46,8 @@ history.py:
 - [ ] majority is broken ATM
 - [ ] programatically appending food data to the csv to improve the recsys
 - [ ] try to rename 'history' to 'logs'(?)
+- [ ] split up csv's by meal type, and consider what csv's strengths qre over sql (can eaily view their own food data?)
+
 
 recsys.py:
 - [ ] 
