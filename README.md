@@ -37,6 +37,10 @@ python3 recsys_gui1.py
 TODO:
 put x in each box (no spaces) when done
 
+users.py:
+- [ ] user updates such as pw changes, deletion, etc
+- [ ] https connection (e.g user registration POST w/ password)
+
 history.py:
 - [ ] majority is broken ATM
 - [ ] programatically appending food data to the csv to improve the recsys
@@ -44,10 +48,6 @@ history.py:
 
 recsys.py:
 - [ ] 
-
-users.py:
-- [ ] user updates such as pw changes, deletion, etc
-- [ ] https connection (e.g user registration POST w/ password)
 
 other:
 - [ ] split sqlite tables into separate .db files
